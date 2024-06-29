@@ -26,10 +26,10 @@ interface UserState {
     uid: string;
     token: string;
     isEmailVerified?: boolean;
-    color: string;
-    age: number;
-    gender: string;
-    sunnyCategory: string;
+    color?: string;
+    age?: number;
+    gender?: string;
+    sunnyCategory?: string;
   }) => void;
   isTokenExpired: () => boolean;
   logout: () => void;
