@@ -98,53 +98,53 @@ export default function Login() {
     }
   };
 
-  const signUpWithGithub = async () => {
-    try {
-      const user = await firebase.signUpWithGithub();
-      const token = await user.getIdToken();
-      const res = await signUp({
-        email: user.email!,
-        firebaseUid: user.uid!,
-        registerType: "github",
-        userName: user.displayName!,
-        displayImage: user.photoURL,
-        isEmailVerified: user.emailVerified,
-        token: token
-      });
+  // const signUpWithGithub = async () => {
+  //   try {
+  //     const user = await firebase.signUpWithGithub();
+  //     const token = await user.getIdToken();
+  //     const res = await signUp({
+  //       email: user.email!,
+  //       firebaseUid: user.uid!,
+  //       registerType: "github",
+  //       userName: user.displayName!,
+  //       displayImage: user.photoURL,
+  //       isEmailVerified: user.emailVerified,
+  //       token: token
+  //     });
 
-      setUser({
-        id: res.data.userId,
-        email: user.email!,
-        userName: user.displayName!,
-        uid: user.uid!,
-        token: token,
-        displayImage: user.photoURL,
-        isEmailVerified: user.emailVerified
-      });
-      toast.success("สมัครสมาชิกสำเร็จ");
-      await router.push(
-        router.query.redirectTo ? (router.query.redirectTo as string) : "/"
-      );
-    } catch (error: any) {
-      console.error(error);
-      const message = firebase.mapAuthCodeToMessage(error.code);
-      toast.error("สมัครสมาชิกไม่สำเร็จ: " + message);
-    }
-  };
+  //     setUser({
+  //       id: res.data.userId,
+  //       email: user.email!,
+  //       userName: user.displayName!,
+  //       uid: user.uid!,
+  //       token: token,
+  //       displayImage: user.photoURL,
+  //       isEmailVerified: user.emailVerified
+  //     });
+  //     toast.success("สมัครสมาชิกสำเร็จ");
+  //     await router.push(
+  //       router.query.redirectTo ? (router.query.redirectTo as string) : "/"
+  //     );
+  //   } catch (error: any) {
+  //     console.error(error);
+  //     const message = firebase.mapAuthCodeToMessage(error.code);
+  //     toast.error("สมัครสมาชิกไม่สำเร็จ: " + message);
+  //   }
+  // };
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: ""
     },
     validationSchema: Yup.object({
-      username: Yup.string().required("Required"),
+      email: Yup.string().required("Required"),
       password: Yup.string().required("Required")
     }),
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        logInHandler(values.username, values.password);
+        logInHandler(values.email, values.password);
         await router.push("/home");
       } catch (error) {
         console.error(error);
@@ -186,19 +186,19 @@ export default function Login() {
           <div>
             <input
               type="text"
-              name="username"
+              name="email"
               placeholder="ชื่อผู้ใช้งาน"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.username}
+              value={formik.values.email}
               className={`w-full px-3 py-2 border-2 rounded-full focus:outline-none focus:ring ${
-                formik.touched.username && formik.errors.username
+                formik.touched.email && formik.errors.email
                   ? "border-red-400 focus:ring-red-200"
                   : "border-green-400 focus:ring-green-200"
               }`}
             />
-            {formik.touched.username && formik.errors.username ? (
-              <div className="text-red-600">{formik.errors.username}</div>
+            {formik.touched.email && formik.errors.email ? (
+              <div className="text-red-600">{formik.errors.email}</div>
             ) : null}
           </div>
           <div>

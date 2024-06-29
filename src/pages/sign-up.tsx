@@ -17,14 +17,12 @@ export default function Register() {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
       confirmPassword: ""
     },
     validationSchema: Yup.object({
-      username: Yup.string()
-        .max(15, "Must be 15 characters or less")
-        .required("Required"),
+      email: Yup.string().email("Invalid email address"),
       password: Yup.string()
         .min(6, "Must be at least 6 characters")
         .required("Required"),
@@ -36,9 +34,9 @@ export default function Register() {
       setLoading(true);
       try {
         await signUpHandler(
-          values.username,
-          values.password,
-          values.confirmPassword
+          values.email,
+          values.password
+          // values.confirmPassword
         );
         await router.push("/home");
       } catch (error) {
@@ -50,18 +48,18 @@ export default function Register() {
 
   const signUpHandler = async (
     email: string,
-    password: string,
-    userName: string
+    password: string
+    // userName: string
   ) => {
     const toastId = toast.loading("กำลังสมัครสมาชิก...");
     try {
-      const user = await firebase.signUp(email, password, userName);
+      const user = await firebase.signUp(email, password, "");
       const token = await user.getIdToken();
       const res = await signUp({
         email: user.email!,
         firebaseUid: user.uid!,
         registerType: "email",
-        userName: userName!,
+        userName: "",
         token: token
       });
 
@@ -122,19 +120,19 @@ export default function Register() {
           <div>
             <input
               type="text"
-              name="username"
-              placeholder="ชื่อผู้ใช้งาน"
+              name="email"
+              placeholder="อีเมล"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.username}
+              value={formik.values.email}
               className={`w-full px-3 py-2 border-2 rounded-full focus:outline-none focus:ring ${
-                formik.touched.username && formik.errors.username
+                formik.touched.email && formik.errors.email
                   ? "border-red-400 focus:ring-red-200"
                   : "border-green-400 focus:ring-green-200"
               }`}
             />
-            {formik.touched.username && formik.errors.username ? (
-              <div className="text-red-600">{formik.errors.username}</div>
+            {formik.touched.email && formik.errors.email ? (
+              <div className="text-red-600">{formik.errors.email}</div>
             ) : null}
           </div>
           <div>
