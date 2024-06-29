@@ -151,23 +151,23 @@ export default function Home() {
 
   const [summaryList, setSummaryList] = useState([]);
 
-  const historyData = [
-    {
-      date: "2023-06-26",
-      text: "ความสุขสันต์",
-      image:
-        "https://upload.wikimedia.org/wikipedia/en/f/fd/Pusheen_the_Cat.png",
-      color: "#FA805F"
-    },
-    {
-      date: "2023-06-27",
-      text: "ความสุขสันต์",
-      image:
-        "https://upload.wikimedia.org/wikipedia/en/f/fd/Pusheen_the_Cat.png",
-      color: "#FA805F"
-    }
-    // Add more items as needed
-  ];
+  // const historyData = [
+  //   {
+  //     date: "2023-06-26",
+  //     text: "ความสุขสันต์",
+  //     image:
+  //       "https://upload.wikimedia.org/wikipedia/en/f/fd/Pusheen_the_Cat.png",
+  //     color: "#FA805F"
+  //   },
+  //   {
+  //     date: "2023-06-27",
+  //     text: "ความสุขสันต์",
+  //     image:
+  //       "https://upload.wikimedia.org/wikipedia/en/f/fd/Pusheen_the_Cat.png",
+  //     color: "#FA805F"
+  //   }
+  //   // Add more items as needed
+  // ];
 
   // const fetchUserInfo = async () => {
   //   const auth = getAuth();

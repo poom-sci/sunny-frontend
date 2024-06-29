@@ -6,6 +6,9 @@ import DailySummary from "@/components/DailySummary";
 import { useRouter } from "next/router";
 import RandomBackgroundImages from "@/components/RandomBackground";
 import IconBack from "@/components/icons/back";
+import { getAuth } from "firebase/auth";
+import { useEffect } from "react";
+import { getUser, getMoodCurrentWeek, getAllSummary } from "@/api/auth";
 
 interface DailySummaryType {
   date: Date;
@@ -16,20 +19,39 @@ interface DailySummaryType {
 const Home: NextPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const router = useRouter();
+  const [summaries, setSummaryList] = useState([]);
 
+  const fetchSummaryAll = async () => {
+    const auth = getAuth();
+
+    // const currentUser = auth.currentUser;
+
+    auth.onAuthStateChanged(async (user) => {
+      const summary = await getAllSummary(user.uid);
+
+      // console.log("asdfasdf", summaryList);
+      setSummaryList(
+        summary.data.map((s: any) => ({ ...s, date: new Date(s.date) }))
+      );
+    });
+  };
+
+  useEffect(() => {
+    fetchSummaryAll();
+  }, []);
   // Example data (in real usage, fetch from API or database)
-  const summaries: DailySummaryType[] = [
-    {
-      date: new Date(2024, 5, 10),
-      moods: ["ความสุข", "ตื่นเต้น"],
-      description: ["ทำบุญตักบาตร", "ออกกำลังกาย", "อ่านหนังสือ"]
-    },
-    {
-      date: new Date(2024, 5, 11),
-      moods: ["ตื่นเต้น", "ความสุข"],
-      description: ["ไปเที่ยวทะเล", "ทานอาหารอร่อย", "ถ่ายรูปสวยๆ"]
-    }
-  ];
+  // const summaries: DailySummaryType[] = [
+  //   {
+  //     date: new Date(2024, 5, 10),
+  //     moods: ["ความสุข", "ตื่นเต้น"],
+  //     description: ["ทำบุญตักบาตร", "ออกกำลังกาย", "อ่านหนังสือ"]
+  //   },
+  //   {
+  //     date: new Date(2024, 5, 11),
+  //     moods: ["ตื่นเต้น", "ความสุข"],
+  //     description: ["ไปเที่ยวทะเล", "ทานอาหารอร่อย", "ถ่ายรูปสวยๆ"]
+  //   }
+  // ];
 
   const selectedSummary = selectedDate
     ? summaries.find(
@@ -56,10 +78,12 @@ const Home: NextPage = () => {
         </div>
         <Calendar summaries={summaries} onDateSelect={setSelectedDate} />
         <DailySummary summary={selectedSummary} />
-        <button className="mt-4 w-full py-2 bg-blue-100 text-white rounded-full shadow-md hover:bg-blue-300 transition duration-300 ease-in-out"
-        onClick={()=>{
-          router.push('/chat?chatId='+summaries[0].id)
-        }}>
+        <button
+          className="mt-4 w-full py-2 bg-blue-100 text-white rounded-full shadow-md hover:bg-blue-300 transition duration-300 ease-in-out"
+          onClick={() => {
+            router.push("/chat?chatId=" + selectedSummary.chatId);
+          }}
+        >
           ย้อนดูประวัติการคุย
         </button>
       </div>

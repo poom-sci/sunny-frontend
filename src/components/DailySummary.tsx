@@ -39,17 +39,27 @@ const DailySummary = ({ summary }) => {
       <p>{format(summary.date, "PPPP", { locale: th })}</p>
 
       <div className="flex flex-row items-center justify-around my-4">
-        {summary.moods.map((mood, index) => (
+        <MoodCard
+          mood={summary.color}
+          colorClass={moodToColorClass(summary.color)}
+          label={summary.color}
+        />
+        <MoodCard
+          mood={summary.color1}
+          colorClass={moodToColorClass(summary.color1)}
+          label={summary.color1}
+        />
+        {/* {summary.moods.map((mood, index) => (
           <MoodCard
             key={index}
             mood={mood}
             colorClass={moodToColorClass(mood)}
             label={mood}
           />
-        ))}
+        ))} */}
       </div>
       <div className="bg-green-100 text-white p-4 rounded-lg">
-        {summary.description}
+        {summary.summary}
       </div>
     </div>
   );
