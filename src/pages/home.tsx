@@ -24,6 +24,16 @@ app();
 
 moment.locale("th");
 
+interface Goal {
+  id: number;
+  title: string;
+  progress: number;
+  total: number;
+  icon: string;
+  bgColor: string;
+  textColor: string;
+}
+
 const goals: Goal[] = [
   {
     id: 1,
