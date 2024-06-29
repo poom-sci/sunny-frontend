@@ -86,7 +86,7 @@ const CustomRadarChart: React.FC = () => {
         });
         setIsOk(true);
 
-        console.log("asdfasdf", moodCurrentWeek.isIntroComplete);
+        // console.log("asdfasdf", moodCurrentWeek.isIntroComplete);
       } catch (error) {
         console.error("Error fetching moodCurrentWeek:", error);
       }

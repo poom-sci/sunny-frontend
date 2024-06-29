@@ -18,7 +18,7 @@ interface Goal {
 
 const GoalsPage = ({ initialGoals }) => {
   const router = useRouter();
-  const [goals, setGoals] = React.useState(initialGoals);
+  const [goals, setGoals] = React.useState([]);
   const user = userStore((state) => state.user);
 
   const getAdjustedProgress = (progress: number, duration: number) => {
@@ -104,21 +104,21 @@ const GoalsPage = ({ initialGoals }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  // Here, you would normally fetch data from an API or database
-  const user = {}; // Get user data from your authentication system
-  let goals = [];
+// export async function getServerSideProps(context) {
+//   // Here, you would normally fetch data from an API or database
+//   const user = {}; // Get user data from your authentication system
+//   let goals = [];
 
-  if (user) {
-    const resp = await getGoal(user.uid);
-    goals = resp.data;
-  }
+//   if (user) {
+//     const resp = await getGoal("");
+//     goals = resp.data;
+//   }
 
-  return {
-    props: {
-      initialGoals: goals
-    }
-  };
-}
+//   return {
+//     props: {
+//       initialGoals: goals
+//     }
+//   };
+// }
 
 export default GoalsPage;

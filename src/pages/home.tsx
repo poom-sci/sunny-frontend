@@ -119,11 +119,15 @@ const Button = ({ color, text, icon, onClick }) => (
   </button>
 );
 
-const HistoryItem = ({ date, text, color }) => {
+const HistoryItem = ({ date, text, color, mood, chatId }) => {
   const formattedDate = moment(date).format("DD MMMM YYYY");
+  const router = useRouter();
   return (
     <div
-      className={`flex items-center space-x-4 min-w-max px-4 py-6 border-2 border-[${color}] rounded-tl-md rounded-bl-2xl rounded-tr-2xl rounded-br-md shadow-lg`}
+      className={`flex items-center space-x-4 min-w-max px-4 py-6 border-2 border-[${color}] rounded-tl-md rounded-bl-2xl rounded-tr-2xl rounded-br-md shadow-lg cursor-pointer`}
+      onClick={() => {
+        router.push(`/chat/${chatId}`);
+      }}
     >
       {/* <img
         // src={image}
@@ -132,7 +136,7 @@ const HistoryItem = ({ date, text, color }) => {
       /> */}
       <div>
         <p className="text-gray-700">{formattedDate}</p>
-        <p className="text-orange-500">{text}</p>
+        <p className="text-orange-500">{mood}</p>
       </div>
     </div>
   );
@@ -327,7 +331,8 @@ export default function Home() {
                   key={index}
                   date={item.date}
                   text={item.summary}
-                  // image={item.image}
+                  mood={item.color}
+                  chatId={item.chatId}
                   color={item.color}
                 />
               ))}

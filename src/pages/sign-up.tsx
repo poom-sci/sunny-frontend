@@ -67,7 +67,7 @@ export default function Register() {
         id: res.data.userId,
         email: email!,
         displayImage: "",
-        userName: userName,
+        userName: "",
         uid: user.uid!,
         token: token,
         isEmailVerified: false
