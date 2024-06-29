@@ -56,8 +56,11 @@ const Home: NextPage = () => {
         </div>
         <Calendar summaries={summaries} onDateSelect={setSelectedDate} />
         <DailySummary summary={selectedSummary} />
-        <button className="mt-4 w-full py-2 bg-blue-100 text-white rounded-full shadow-md hover:bg-blue-300 transition duration-300 ease-in-out">
-          ย้อนดูประวัติการพูดคุย
+        <button className="mt-4 w-full py-2 bg-blue-100 text-white rounded-full shadow-md hover:bg-blue-300 transition duration-300 ease-in-out"
+        onClick={()=>{
+          router.push('/chat?chatId='+summaries[0].id)
+        }}>
+          ย้อนดูประวัติการคุย
         </button>
       </div>
     </div>

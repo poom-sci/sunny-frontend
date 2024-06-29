@@ -61,6 +61,12 @@ const CustomRadarChart: React.FC = () => {
 
         console.log("asdfasf", moodCurrentWeek, moodCurrentWeek2);
 
+        if (!moodCurrentWeek2.mood) {
+          // setMoodCurrentWeek()
+          // setIsOk(true);
+          return;
+        }
+
         setMoodCurrentWeek((oldState) => {
           // map from {
           //   "work": 1,
