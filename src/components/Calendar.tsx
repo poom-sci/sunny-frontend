@@ -12,8 +12,8 @@ import { th } from "date-fns/locale";
 
 interface DailySummary {
   date: Date;
-  mood: "happy" | "excited" | "neutral" | "sad";
-  activities: string[];
+  moods: string[];
+  description: string[];
 }
 
 interface CalendarProps {
@@ -33,45 +33,76 @@ const Calendar: React.FC<CalendarProps> = ({ summaries, onDateSelect }) => {
   });
 
   return (
-    <div className="card bg-base-100 shadow-xl">
-      <div className="card-body">
-        <h2 className="card-title">ปฏิทิน</h2>
-        <div className="flex justify-between items-center">
-          <button className="btn btn-circle" onClick={prevMonth}>
-            ❮
-          </button>
-          <span>{format(currentDate, "MMMM yyyy", { locale: th })}</span>
-          <button className="btn btn-circle" onClick={nextMonth}>
-            ❯
-          </button>
-        </div>
-        <div className="grid grid-cols-7 gap-1 mt-4">
-          {["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"].map((day) => (
-            <div key={day} className="text-center font-bold">
-              {day}
-            </div>
-          ))}
-          {days.map((day) => {
-            const summary = summaries.find(
-              (s) =>
-                s.date.getDate() === day.getDate() &&
-                s.date.getMonth() === day.getMonth()
-            );
-            return (
-              <button
-                key={day.toString()}
-                className={`btn btn-sm ${
-                  summary
-                    ? "btn-primary"
-                    : "btn-ghost btn-disabled bg-slate-200/20"
-                }`}
-                onClick={() => onDateSelect(day)}
-              >
-                {format(day, "d")}
-              </button>
-            );
-          })}
-        </div>
+    <div>
+      <div className="flex justify-between items-center mb-2">
+        <button
+          onClick={prevMonth}
+          className="text-gray-500 focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+        <span className="font-semibold text-lg">
+          {format(currentDate, "MMMM yyyy", { locale: th })}
+        </span>
+        <button
+          onClick={nextMonth}
+          className="text-gray-500 focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+      <div className="grid grid-cols-7 gap-1 mb-4 border-2 border-core-grey p-2 rounded-tr-3xl rounded-tl-3xl rounded-bl-3xl">
+        {["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"].map((day) => (
+          <div key={day} className="text-center font-bold">
+            {day}
+          </div>
+        ))}
+        {days.map((day) => {
+          const summary = summaries.find(
+            (s) =>
+              s.date.getDate() === day.getDate() &&
+              s.date.getMonth() === day.getMonth()
+          );
+          return (
+            <button
+              key={day.toString()}
+              className={`p-2 text-center rounded-xl ${
+                summary
+                  ? "bg-blue-300"
+                  : "bg-gray-100 btn-disabled text-core-grey"
+              }`}
+              onClick={() => onDateSelect(day)}
+            >
+              {format(day, "d")}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

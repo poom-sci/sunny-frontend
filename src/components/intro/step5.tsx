@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import IconBack from "@/components/icons/back";
 
 interface Step5Props {
   onNext: (friendType: string) => void;
@@ -10,11 +11,11 @@ const Step5: React.FC<Step5Props> = ({ onNext, onPrevious }) => {
 
   return (
     <div className="flex flex-col items-center justify-center  p-4 ">
-      <button
+       <button
         onClick={onPrevious}
-        className="self-start mb-4 px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+        className="self-start m-2  rounded-lg hover:opacity-60"
       >
-        <i className="fa fa-arrow-left mr-2"></i>Back
+        <IconBack className="" width={24} height={24} color="#979797" />
       </button>
       <h2 className="text-2xl font-bold mb-4 text-pink-500">
         เธออยากจะให้ Sunny เป็นเพื่อนแบบไหน ?

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import IconBack from "@/components/icons/back";
 interface Step3Props {
   onNext: (age: string) => void;
   onPrevious: () => void;
@@ -10,11 +11,17 @@ const Step3: React.FC<Step3Props> = ({ onNext, onPrevious }) => {
 
   return (
     <div className="flex flex-col items-center justify-center  p-4 ">
-      <button
+      {/* <button
         onClick={onPrevious}
         className="self-start mb-4 px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
       >
         <i className="fa fa-arrow-left mr-2"></i>Back
+      </button> */}
+      <button
+        onClick={onPrevious}
+        className="self-start m-2  rounded-lg hover:opacity-60"
+      >
+        <IconBack className="" width={24} height={24} color="#979797" />
       </button>
       <h2 className="text-2xl font-bold mb-4 text-blue-500">
         (ชื่อ)ตอนนี้อายุเท่าไหร่?

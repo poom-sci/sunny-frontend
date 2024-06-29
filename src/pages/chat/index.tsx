@@ -14,6 +14,8 @@ import axios from "axios";
 import useUserStore from "@/stores/user";
 import { useInView } from "react-intersection-observer";
 import RandomBackgroundImages from "@/components/RandomBackground";
+import IconBack from "@/components/icons/back";
+import { summaryChat } from "@/api/auth";
 
 interface Message {
   user: string;
@@ -170,39 +172,36 @@ const Chat: React.FC = () => {
       <div className="">
         <RandomBackgroundImages />
       </div>
-      <div className="w-full max-w-sm p-4 shadow-md rounded-lg z-10 min-h-[80vh] flex flex-col bg-white">
-        <div className="navbar  p-4">
+      <div className="w-[80vw] p-4 shadow-md rounded-lg z-10 min-h-[80vh] flex flex-col bg-white/80">
+        <div className="navbar p-4">
           <div>
             <button
               onClick={() => router.back()}
-              className="text-gray-500 focus:outline-none"
+              className="self-start mr-2 rounded-lg hover:opacity-60"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
+              <IconBack className="" width={24} height={24} color="#979797" />
             </button>
           </div>
+
           <div className="flex-1 text-center">
-            <h1 className="text-lg font-semibold">แชทกับซันนี่</h1>
+            <h1 className="text-lg font-semibold"></h1>
+          </div>
+          <div
+            className="btn btn-primary hover:transform hover:scale-105 transition-transform duration-300 shadow-lg"
+            onClick={() => {
+              summaryChat(storeUser?.uid);
+            }}
+          >
+            สรุปเรื่องราวในวันนี้
           </div>
         </div>
         <div
-          className="flex-grow overflow-y-auto p-4 flex flex-col-reverse rounded-lg bg-core-grey/10"
+          className="flex-grow overflow-y-auto p-4 rounded-lg bg-core-grey/10"
           ref={chatRef}
         >
           <div ref={messageEndRef} />
-          <div className="space-y-4">
+
+          <div className="space-y-4 flex-grow">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -215,12 +214,15 @@ const Chat: React.FC = () => {
                 <div
                   className={`rounded-lg p-2 max-w-xs ${
                     message.created_by !== "user"
-                      ? "bg-[var(--user-message-color)] text-white"
-                      : "bg-red-400 text-white"
+                      ? "bg-core-orange text-white"
+                      : `bg-${userColor} text-white`
                   }`}
                 >
-                  {message.status === "pending" ||
-                  message.status === "processing" ? (
+                  {(message.created_by === "user" &&
+                    message.status === "pending") ||
+                  (message.created_by === "system" &&
+                    (message.status === "pending" ||
+                      message.status === "processing")) ? (
                     <span className="loading loading-dots loading-sm"></span>
                   ) : message.status === "failed" && !message.text ? (
                     <span className="text-red-500">Failed to send message</span>
@@ -239,12 +241,12 @@ const Chat: React.FC = () => {
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              className={`flex-grow p-2  rounded-lg focus:outline-none bg-[var(--chat-input-bg)] border-2 border-${userColor}`}
+              className={`flex-grow p-2 rounded-lg focus:outline-none border-${userColor} border-2`}
               placeholder="ส่ง..."
             />
             <button
               onClick={sendMessage}
-              className={`p-2 bg-${userColor} text-white rounded-lg  `}
+              className={`p-2 bg-${userColor} text-white rounded-lg`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

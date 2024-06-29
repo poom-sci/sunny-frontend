@@ -133,7 +133,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <main
-      className={`${IbmPlexSans.variable} ${Londrina.variable} overflow-hidden`}
+      className={`${IbmPlexSans.variable} ${Londrina.variable}`}
     >
       {/* {isLoading ? (
         <div className="flex justify-center items-center h-screen">
@@ -150,7 +150,7 @@ export default function App({ Component, pageProps }: AppProps) {
       ) : ( */}
 
       {isLoading ? (
-        <div className="w-screen h-screen">
+        <div className="w-[100vw] h-screen">
           <div className="w-full h-full flex justify-center items-center">
             <Lottie
               animationData={loadingLottie}
@@ -160,7 +160,7 @@ export default function App({ Component, pageProps }: AppProps) {
           </div>
         </div>
       ) : (
-        <div className="w-screen overflow-hidden flex justify-center items-center align-middle">
+        <div className="w-[100vw] overflow-hidden flex justify-center items-center align-middle">
           <Component {...pageProps} />
         </div>
       )}

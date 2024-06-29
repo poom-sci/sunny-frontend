@@ -182,3 +182,137 @@ export const updateIntroComplete = async ({
     throw error;
   }
 };
+
+export const getMoodCurrentWeek = async (
+  firebaseUid: string,
+  token: string
+) => {
+  try {
+    const response = await request({
+      url: `/secure/auth/mood/week/${firebaseUid}`,
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const createMood = async ({
+  uid,
+  play,
+  work,
+  study,
+  relationship,
+  health
+}: {
+  uid: string;
+  play: number;
+  work: number;
+  study: number;
+  relationship: number;
+  health: number;
+}) => {
+  try {
+    const response = await request({
+      url: `/secure/auth/mood/${uid}`,
+      method: "POST",
+      headers: {
+        // Authorization: "Bearer " + token
+      },
+      data: {
+        uid,
+        play,
+        work,
+        study,
+        relationship,
+        health
+      }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const summaryChat = async (uid: string) => {
+  try {
+    const response = await request({
+      url: `/secure/auth/summary`,
+      method: "POST",
+      data: {
+        uid
+      }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const getAllSummary = async (uid: string) => {
+  try {
+    const response = await request({
+      url: `/secure/auth/summary/all/${uid}`,
+      method: "GET"
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const getGoal = async (uid: string) => {
+  try {
+    const response = await request({
+      url: `/secure/auth/goal/${uid}`,
+      method: "GET"
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const createGoal = async ({
+  uid,
+  title,
+  description,
+  duration
+}: {
+  uid: string;
+  title: string;
+  description: string;
+  duration: string;
+}) => {
+  try {
+    const response = await request({
+      url: `/secure/auth/goal`,
+      method: "POST",
+      data: {
+        uid,
+        title,
+        description,
+        duration
+      }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const getGoalById = async (goalId: string) => {
+  try {
+    const response = await request({
+      url: `/secure/auth/goal-detail/${goalId}`,
+      method: "GET"
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};

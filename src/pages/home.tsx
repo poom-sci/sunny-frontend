@@ -12,7 +12,7 @@ import app from "@/lib/firebase";
 import { getAuth } from "firebase/auth";
 
 // api
-import { getUser } from "@/api/auth";
+import { getUser, getMoodCurrentWeek, getAllSummary } from "@/api/auth";
 import userStore from "@/stores/user";
 
 import dynamic from "next/dynamic";
@@ -81,16 +81,16 @@ const Greeting = ({ name }) => {
     const updateGreeting = () => {
       const hours = new Date().getHours();
       if (hours >= 5 && hours < 12) {
-        setGreeting("สวัสดียามเช้า");
+        setGreeting("สวัสดียามเช้า☀️");
         setColor("misc-600");
       } else if (hours >= 12 && hours < 18) {
-        setGreeting("สวัสดียามบ่าย");
+        setGreeting("สวัสดียามบ่าย🌤️");
         setColor("misc-500");
       } else if (hours >= 18 && hours < 21) {
         setGreeting("สวัสดียามเย็น");
         setColor("core-grey");
       } else {
-        setGreeting("สวัสดียามค่ำคืน");
+        setGreeting("สวัสดียามค่ำคืน⭐️");
         setColor("purple-100");
       }
     };
@@ -119,17 +119,17 @@ const Button = ({ color, text, icon, onClick }) => (
   </button>
 );
 
-const HistoryItem = ({ date, text, image, color }) => {
+const HistoryItem = ({ date, text, color }) => {
   const formattedDate = moment(date).format("DD MMMM YYYY");
   return (
     <div
       className={`flex items-center space-x-4 min-w-max px-4 py-6 border-2 border-[${color}] rounded-tl-md rounded-bl-2xl rounded-tr-2xl rounded-br-md shadow-lg`}
     >
-      <img
-        src={image}
+      {/* <img
+        // src={image}
         alt={text}
         className="w-12 h-12 rounded-full object-cover"
-      />
+      /> */}
       <div>
         <p className="text-gray-700">{formattedDate}</p>
         <p className="text-orange-500">{text}</p>
@@ -144,6 +144,8 @@ export default function Home() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const logout = useUserStore((state) => state.logout);
+
+  const [summaryList, setSummaryList] = useState([]);
 
   const historyData = [
     {
@@ -184,6 +186,49 @@ export default function Home() {
   //   }
   // };
 
+  const fetchSummaryAll = async () => {
+    const auth = getAuth();
+
+    // const currentUser = auth.currentUser;
+
+    auth.onAuthStateChanged(async (user) => {
+      const summary = await getAllSummary(user.uid);
+
+      console.log("asdfasdf", summaryList);
+      setSummaryList(summary.data);
+    });
+    // const currentUser = auth.currentUser;
+    // if (currentUser) {
+    //   const token = await currentUser.getIdToken();
+    //   const DbUser = await getUser(currentUser.uid, token);
+
+    //   await setUser({
+    //     id: DbUser.data.userId,
+    //     email: DbUser.data.email,
+    //     userName: DbUser.data.userName,
+    //     uid: DbUser.data.firebaseUid,
+    //     token: token,
+    //     displayImage: DbUser.data.displayImage,
+    //     isEmailVerified: DbUser.data.isEmailVerified
+    //   });
+
+    //   const moodCurrentWeek = await getMoodCurrentWeek(
+    //     currentUser.uid,
+    //     token
+    //   );
+    //   console.log("moodCurrentWeek", moodCurrentWeek);
+
+    //   const summaryAll = await getAllSummary(currentUser.uid, token);
+    //   console.log("summaryAll", summaryAll);
+    // } else {
+    //   console.log("logout");
+    // }
+  };
+
+  useEffect(() => {
+    fetchSummaryAll();
+  }, []);
+
   if (!user) {
     return (
       <div className="w-screen h-screen">
@@ -203,43 +248,39 @@ export default function Home() {
       <div className="">
         <RandomBackgroundImages />
       </div>
-      <div className="w-full max-w-sm p-4 bg-white shadow-md rounded-lg z-10">
+      <div className="w-full max-w-[80vw] p-4 bg-white shadow-md rounded-lg z-10">
         <Greeting name={user.userName} />
-        <div className="flex justify-center m-4 h-[200px]">
+        <div className="flex justify-center m-4 h-[250px]">
           <CustomRadialBarChart />
         </div>
-        <hr className="my-4" />
-        <div className="flex flex-row overflow-x-auto">
-          {goals.map((goal) => (
-            <div
-              key={goal.id}
-              className={`p-4 rounded-lg shadow-lg flex flex-col min-w-[120px] m-2 items-center ${goal.bgColor} cursor-pointer`}
-              onClick={() => {
-                // Goal click functionality here
-              }}
-            >
-              <div className="text-3xl">{goal.icon}</div>
-              <div className="flex-1">
-                <h2 className={`text-lg font-semibold ${goal.textColor}`}>
-                  {goal.title}
-                </h2>
-                {/* <div className="flex items-center mt-2">
-                  <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full bg-blue-500`}
-                      style={{
-                        width: `${50 + (goal.progress / goal.total) * 50}%`
-                      }}
-                    ></div>
+
+        {goals.length > 0 ? (
+          <>
+            <hr className="my-4" />
+            <div className="flex flex-row overflow-x-auto">
+              {goals?.map((goal) => (
+                <div
+                  key={goal.id}
+                  className={`p-4 rounded-lg shadow-lg flex flex-col min-w-[120px] m-2 items-center ${goal.bgColor}`}
+                  // onClick={() => {
+                  //   // Goal click functionality here
+                  // }}
+                >
+                  <div className="text-3xl">{goal.icon}</div>
+                  <div className="flex-1 flex-col items-center justify-center">
+                    <h2 className={`text-lg font-semibold ${goal.textColor}`}>
+                      {goal.title}
+                    </h2>
+                    <div className="text-white text-center">
+                      {goal.progress}/{goal.total}
+                    </div>
+                    {/* <div className="btn btn-circle shadow-xl">✅</div> */}
                   </div>
-                  <div className={` ${goal.textColor}`}>
-                    {goal.progress} / {goal.total}
-                  </div>
-                </div> */}
-              </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        ) : null}
         <hr className="my-4" />
         <div className="space-y-4">
           <Button
@@ -275,21 +316,24 @@ export default function Home() {
             }}
           />
         </div>
-        <div className="mt-6">
-          <h3 className="text-gray-700">ประวัติการพูดคุย</h3>
-          <p className="text-gray-500 text-sm">การสนทนาก่อนหน้ากับซันนี่</p>
-          <div className="mt-4 pb-4 flex space-x-4 overflow-x-auto ">
-            {historyData.map((item, index) => (
-              <HistoryItem
-                key={index}
-                date={item.date}
-                text={item.text}
-                image={item.image}
-                color={item.color}
-              />
-            ))}
+        {summaryList.length !== 0 ? (
+          <div className="mt-6">
+            <h3 className="text-gray-700">ประวัติการพูดคุย</h3>
+            <p className="text-gray-500 text-sm">การสนทนาก่อนหน้ากับซันนี่</p>
+
+            <div className="mt-4 pb-4 flex space-x-4 overflow-x-auto ">
+              {summaryList.map((item, index) => (
+                <HistoryItem
+                  key={index}
+                  date={item.date}
+                  text={item.summary}
+                  // image={item.image}
+                  color={item.color}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );

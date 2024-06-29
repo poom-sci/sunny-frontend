@@ -7,6 +7,8 @@ import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import loadingLottie from "public/icons/lottie_loading.json";
 
+import IconBack from "@/components/icons/back";
+
 const AccountPage: React.FC = () => {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
@@ -35,15 +37,15 @@ const AccountPage: React.FC = () => {
       <div className="">
         <RandomBackgroundImages />
       </div>
-      <div className="w-full max-w-sm p-4 bg-white shadow-md rounded-lg z-10 flex flex-col">
+      <div className="w-[80vw] p-4 bg-white shadow-md rounded-lg z-10 flex flex-col">
         <button
           onClick={() => router.back()}
-          className="self-start mb-4 px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+          className="self-start m-2  rounded-lg hover:opacity-60"
         >
-          <i className="fa fa-arrow-left mr-2"></i> กลับ
+          <IconBack className="" width={24} height={24} color="#979797" />
         </button>
         <h1 className="text-2xl font-bold mb-4">บัญชีของฉัน</h1>
-        <div className="w-full max-w-sm p-6 bg-white shadow-md rounded-lg">
+        <div className="w-full p-6 bg-white shadow-md rounded-lg">
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-core-lightGreen">
               ชื่อผู้ใช้

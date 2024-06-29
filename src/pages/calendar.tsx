@@ -5,30 +5,30 @@ import Calendar from "@/components/Calendar";
 import DailySummary from "@/components/DailySummary";
 import { useRouter } from "next/router";
 import RandomBackgroundImages from "@/components/RandomBackground";
+import IconBack from "@/components/icons/back";
 
 interface DailySummaryType {
   date: Date;
-  mood: "happy" | "excited" | "neutral" | "sad";
-  activities: string[];
+  moods: string[];
+  description: string[];
 }
 
 const Home: NextPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const router = useRouter();
 
-  // ตัวอย่างข้อมูล (ในการใช้งานจริงควรดึงจาก API หรือฐานข้อมูล)
+  // Example data (in real usage, fetch from API or database)
   const summaries: DailySummaryType[] = [
     {
-      date: new Date(2024, 5, 11), // 11 มิถุนายน 2024
-      mood: "happy",
-      activities: ["ทำบุญตักบาตร", "ออกกำลังกาย", "อ่านหนังสือ"]
+      date: new Date(2024, 5, 10),
+      moods: ["ความสุข", "ตื่นเต้น"],
+      description: ["ทำบุญตักบาตร", "ออกกำลังกาย", "อ่านหนังสือ"]
     },
     {
-      date: new Date(2024, 5, 12), // 12 มิถุนายน 2024
-      mood: "excited",
-      activities: ["ไปเที่ยวทะเล", "ทานอาหารอร่อย", "ถ่ายรูปสวยๆ"]
+      date: new Date(2024, 5, 11),
+      moods: ["ตื่นเต้น", "ความสุข"],
+      description: ["ไปเที่ยวทะเล", "ทานอาหารอร่อย", "ถ่ายรูปสวยๆ"]
     }
-    // เพิ่มข้อมูลวันอื่นๆ ตามต้องการ
   ];
 
   const selectedSummary = selectedDate
@@ -48,26 +48,11 @@ const Home: NextPage = () => {
         <div className="flex items-center mb-4">
           <button
             onClick={() => router.back()}
-            className="text-gray-500 focus:outline-none"
+            className="self-start m-2  rounded-lg hover:opacity-60"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <IconBack className="" width={24} height={24} color="#979797" />
           </button>
-          <h1 className="text-xl font-semibold text-orange-500 ml-2">
-            ปฏิทินอารมณ์
-          </h1>
+          <h1 className="text-xl font-semibold text-core-coral ml-2">สถิติ</h1>
         </div>
         <Calendar summaries={summaries} onDateSelect={setSelectedDate} />
         <DailySummary summary={selectedSummary} />
