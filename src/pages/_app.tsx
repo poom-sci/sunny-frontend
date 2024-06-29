@@ -61,7 +61,11 @@ export default function App({ Component, pageProps }: AppProps) {
         uid: DbUser.data.firebaseUid,
         token: token,
         displayImage: DbUser.data.displayImage,
-        isEmailVerified: DbUser.data.isEmailVerified
+        isEmailVerified: DbUser.data.isEmailVerified,
+        age: DbUser.data.age,
+        color: DbUser.data.color,
+        gender: DbUser.data.gender,
+        sunnyCategory: DbUser.data.sunnyCategory
       });
 
       // check is intro complete

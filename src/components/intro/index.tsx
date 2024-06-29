@@ -68,7 +68,7 @@ const App: React.FC = () => {
             gender,
             sunnyCategory: friendType,
             futureMe: dream,
-            futureMeIdeal: dream2
+            futureMeIdeal: value
           });
           await router.push("/home");
           setLoading(false);

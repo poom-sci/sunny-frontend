@@ -1,23 +1,19 @@
 import React from "react";
 import { useRouter } from "next/router";
 import RandomBackgroundImages from "@/components/RandomBackground";
-
 import { logout } from "@/lib/firebase";
 import useUserStore from "@/stores/user";
-
 import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import loadingLottie from "public/icons/lottie_loading.json";
 
 const AccountPage: React.FC = () => {
   const router = useRouter();
-
   const user = useUserStore((state) => state.user);
 
   const handleLogout = async () => {
-    // Add your logout logic here
     await logout();
-    await router.push("/login"); // Redirect to login page after logout
+    await router.push("/login");
   };
 
   if (!user) {
@@ -60,11 +56,21 @@ const AccountPage: React.FC = () => {
           </div>
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-core-coral">เพศ</h2>
-            <p className="text-gray-700">ชาย</p>
+            <p className="text-gray-700">{user.gender}</p>
           </div>
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-core-orange">อายุ</h2>
-            <p className="text-gray-700">30 ปี</p>
+            <p className="text-gray-700">{user.age} ปี</p>
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-core-yellow">สีที่ชอบ</h2>
+            <p className="text-gray-700">{user.color}</p>
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-core-purple">
+              หมวดซันนี่
+            </h2>
+            <p className="text-gray-700">{user.sunnyCategory}</p>
           </div>
         </div>
         <button

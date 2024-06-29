@@ -10,6 +10,10 @@ interface UserState {
     token: string;
     expiresAt: number;
     isEmailVerified: boolean;
+    color: string;
+    gender: string;
+    sunnyCategory: string;
+    age: number;
   } | null;
   isLoading: boolean;
 
@@ -22,6 +26,10 @@ interface UserState {
     uid: string;
     token: string;
     isEmailVerified?: boolean;
+    color: string;
+    age: number;
+    gender: string;
+    sunnyCategory: string;
   }) => void;
   isTokenExpired: () => boolean;
   logout: () => void;
