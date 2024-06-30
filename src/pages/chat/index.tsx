@@ -17,6 +17,11 @@ import RandomBackgroundImages from "@/components/RandomBackground";
 import IconBack from "@/components/icons/back";
 import { summaryChat } from "@/api/auth";
 
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+import loadingLottie from "public/icons/lottie_loading.json";
+
 interface Message {
   user: string;
   text: string;
@@ -27,6 +32,15 @@ interface Message {
   created_by: string;
 }
 
+const moods = [
+  { name: "ความสุข", color: "bg-green-500" },
+  { name: "ความรัก", color: "bg-pink-500" },
+  { name: "ความโกรธ", color: "bg-red-500" },
+  { name: "ความเศร้า", color: "bg-blue-500" },
+  { name: "ความกลัว", color: "bg-yellow-500" },
+  { name: "ประหลาดใจ", color: "bg-purple-500" }
+];
+
 const Chat: React.FC = () => {
   const router = useRouter();
   const storeUser = useUserStore((state) => state.user);
@@ -34,6 +48,7 @@ const Chat: React.FC = () => {
   const [chatId, setChatId] = useState<string>("");
   const [newMessage, setNewMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [moodSelected, setMoodSelected] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const lastMessageTimestamp = useRef<number | null>(null);
@@ -70,7 +85,7 @@ const Chat: React.FC = () => {
       }
     }
 
-    setLoading(false);
+    // setLoading(false);
   }, [chatId, loading]);
 
   useEffect(() => {
@@ -104,10 +119,11 @@ const Chat: React.FC = () => {
             setMessages(
               updatedMessages.sort((a, b) => a.created_at - b.created_at)
             );
-            messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            // messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
           }
         });
 
+        // setLoading(false);
         // Return the unsubscribe function
         return unsubscribe;
       } catch (error) {
@@ -123,6 +139,11 @@ const Chat: React.FC = () => {
       });
     }
 
+    // setLoading(false);
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
     // Cleanup function
     return () => {
       if (unsubscribe) {
@@ -135,6 +156,7 @@ const Chat: React.FC = () => {
     if (inView && !loading) {
       fetchMoreMessages();
     }
+    // setLoading(false);
   }, [inView, loading, fetchMoreMessages]);
 
   const sendMessage = async () => {
@@ -167,6 +189,31 @@ const Chat: React.FC = () => {
     }
   };
 
+  const selectMood = async (mood) => {
+    setMoodSelected(true);
+    // Handle mood selection logic here
+    console.log("Selected mood:", mood);
+    await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/chat/send`, {
+      chatId,
+      uid: storeUser?.uid,
+      text: "สวัสดี sunny วันนี้ฉันรู้สึก" + mood
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="w-screen h-screen">
+        <div className="w-full h-full flex justify-center items-center">
+          <Lottie
+            animationData={loadingLottie}
+            className="flex flex-1 justify-center items-center w-48 h-48"
+            loop={true}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-IBMPlexSanThai">
       <div className="">
@@ -188,8 +235,14 @@ const Chat: React.FC = () => {
           </div>
           <div
             className="btn btn-primary hover:transform hover:scale-105 transition-transform duration-300 shadow-lg"
-            onClick={() => {
-              summaryChat(storeUser?.uid);
+            onClick={async () => {
+              try {
+                const res = await summaryChat(storeUser?.uid);
+
+                await router.push("/calendar?chatId=" + chatId);
+              } catch (error) {
+                console.log(error);
+              }
             }}
           >
             สรุปเรื่องราวในวันนี้
@@ -236,34 +289,59 @@ const Chat: React.FC = () => {
           <div ref={topRef} />
         </div>
         <div className="p-4">
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              className={`flex-grow p-2 rounded-lg focus:outline-none border-${userColor} border-2`}
-              placeholder="ส่ง..."
-            />
-            <button
-              onClick={sendMessage}
-              className={`p-2 bg-${userColor} text-white rounded-lg`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-6 h-6"
+          {messages.length == 0 && !moodSelected ? (
+            <div className="space-y-4">
+              <h2 className="text-center text-lg font-semibold">
+                เลือกอารมณ์ของวันนี้ ?
+              </h2>
+              <div className="grid grid-cols-3 gap-2">
+                {moods.map((mood) => (
+                  <button
+                    key={mood.name}
+                    className={`p-2 rounded-lg text-white ${mood.color}`}
+                    onClick={() => selectMood(mood.name)}
+                  >
+                    {mood.name}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="mt-4 w-full py-2 bg-gray-300 text-white rounded-full shadow-md hover:bg-gray-400 transition duration-300 ease-in-out"
+                onClick={() => setMoodSelected(true)}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 10l7-7m0 0l7 7m-7-7v18"
-                />
-              </svg>
-            </button>
-          </div>
+                ยืนยัน
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                className={`flex-grow p-2 rounded-lg focus:outline-none border-${userColor} border-2`}
+                placeholder="ส่ง..."
+              />
+              <button
+                onClick={sendMessage}
+                className={`p-2 bg-${userColor} text-white rounded-lg`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 10l7-7m0 0l7 7m-7-7v18"
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

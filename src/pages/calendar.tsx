@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   const router = useRouter();
   const [summaries, setSummaryList] = useState([]);
 
-  const fetchSummaryAll = async () => {
+  const fetchSummaryAll = async (chatId) => {
     const auth = getAuth();
 
     // const currentUser = auth.currentUser;
@@ -33,12 +33,30 @@ const Home: NextPage = () => {
       setSummaryList(
         summary.data.map((s: any) => ({ ...s, date: new Date(s.date) }))
       );
+
+      // set summaryList(summary.data); if query have chatId that match
+      // console.log("chatId", summary);
+      if (chatId) {
+        const selectedSummary = summary.data
+          .map((s: any) => ({ ...s, date: new Date(s.date) }))
+          .find((s) => s.chatId === chatId.toString());
+
+        console.log("--asfasdf", chatId, summary);
+        if (!selectedSummary) return;
+
+        setSelectedDate(selectedSummary.date);
+      }
     });
   };
 
   useEffect(() => {
-    fetchSummaryAll();
-  }, []);
+    // console.log("asdfasdfas", chatId);
+
+    // setTimeout(() => {
+    const chatId = router.query.chatId;
+    fetchSummaryAll(chatId);
+    // }, 400);
+  }, [router.query]);
   // Example data (in real usage, fetch from API or database)
   // const summaries: DailySummaryType[] = [
   //   {
@@ -66,7 +84,7 @@ const Home: NextPage = () => {
       <div className="absolute inset-0 z-0">
         <RandomBackgroundImages />
       </div>
-      <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg z-10 opacity-95">
+      <div className="w-[80vw] p-8 bg-white shadow-md rounded-lg z-10 opacity-95">
         <div className="flex items-center mb-4">
           <button
             onClick={() => router.back()}

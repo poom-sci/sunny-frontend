@@ -12,7 +12,12 @@ import app from "@/lib/firebase";
 import { getAuth } from "firebase/auth";
 
 // api
-import { getUser, getMoodCurrentWeek, getAllSummary } from "@/api/auth";
+import {
+  getUser,
+  getMoodCurrentWeek,
+  getAllSummary,
+  getGoal
+} from "@/api/auth";
 import userStore from "@/stores/user";
 
 import dynamic from "next/dynamic";
@@ -27,51 +32,51 @@ moment.locale("th");
 interface Goal {
   id: number;
   title: string;
-  progress: number;
-  total: number;
+  count: number;
+  duration: number;
   icon: string;
   bgColor: string;
   textColor: string;
 }
 
-const goals: Goal[] = [
-  {
-    id: 1,
-    title: "ทำงานบ้าน",
-    progress: 10,
-    total: 10,
-    icon: "📖",
-    bgColor: "bg-core-orange",
-    textColor: "text-white"
-  },
-  {
-    id: 2,
-    title: "ออกกำลังกาย",
-    progress: 9,
-    total: 10,
-    icon: "📖",
-    bgColor: "bg-core-lightBlue",
-    textColor: "text-white"
-  },
-  {
-    id: 3,
-    title: "อ่านหนังสือ",
-    progress: 7,
-    total: 10,
-    icon: "📖",
-    bgColor: "bg-core-coral",
-    textColor: "text-white"
-  },
-  {
-    id: 4,
-    title: "ดูซีรี่ย์",
-    progress: 4,
-    total: 10,
-    icon: "📖",
-    bgColor: "bg-core-lightGreen",
-    textColor: "text-white"
-  }
-];
+// const goals: Goal[] = [
+//   {
+//     id: 1,
+//     title: "ทำงานบ้าน",
+//     progress: 10,
+//     total: 10,
+//     icon: "📖",
+//     bgColor: "bg-core-orange",
+//     textColor: "text-white"
+//   },
+//   {
+//     id: 2,
+//     title: "ออกกำลังกาย",
+//     progress: 9,
+//     total: 10,
+//     icon: "📖",
+//     bgColor: "bg-core-lightBlue",
+//     textColor: "text-white"
+//   },
+//   {
+//     id: 3,
+//     title: "อ่านหนังสือ",
+//     progress: 7,
+//     total: 10,
+//     icon: "📖",
+//     bgColor: "bg-core-coral",
+//     textColor: "text-white"
+//   },
+//   {
+//     id: 4,
+//     title: "ดูซีรี่ย์",
+//     progress: 4,
+//     total: 10,
+//     icon: "📖",
+//     bgColor: "bg-core-lightGreen",
+//     textColor: "text-white"
+//   }
+// ];
 
 const Greeting = ({ name }) => {
   const [greeting, setGreeting] = useState("");
@@ -190,6 +195,7 @@ export default function Home() {
   //   }
   // };
 
+  const [goals, setGoals] = useState([]);
   const fetchSummaryAll = async () => {
     const auth = getAuth();
 
@@ -201,6 +207,7 @@ export default function Home() {
       console.log("asdfasdf", summaryList);
       setSummaryList(summary.data);
     });
+
     // const currentUser = auth.currentUser;
     // if (currentUser) {
     //   const token = await currentUser.getIdToken();
@@ -231,7 +238,16 @@ export default function Home() {
 
   useEffect(() => {
     fetchSummaryAll();
-  }, []);
+
+    if (!user) return;
+
+    const fetchGoal = async () => {
+      const resp = await getGoal(user.uid);
+      setGoals(resp.data);
+    };
+
+    fetchGoal();
+  }, [user]);
 
   if (!user) {
     return (
@@ -265,7 +281,7 @@ export default function Home() {
               {goals?.map((goal) => (
                 <div
                   key={goal.id}
-                  className={`p-4 rounded-lg shadow-lg flex flex-col min-w-[120px] m-2 items-center ${goal.bgColor}`}
+                  className={`p-4 rounded-lg shadow-lg flex flex-col min-w-[120px] m-2 items-center bg-core-lightBlue`}
                   // onClick={() => {
                   //   // Goal click functionality here
                   // }}
@@ -276,7 +292,7 @@ export default function Home() {
                       {goal.title}
                     </h2>
                     <div className="text-white text-center">
-                      {goal.progress}/{goal.total}
+                      {goal.count}/{goal.duration}
                     </div>
                     {/* <div className="btn btn-circle shadow-xl">✅</div> */}
                   </div>

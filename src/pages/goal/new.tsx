@@ -47,7 +47,7 @@ const AddGoalPage = () => {
       <div className="absolute inset-0 z-0">
         <RandomBackgroundImages />
       </div>
-      <div className="w-full p-4 bg-white shadow-md rounded-lg z-10 relative">
+      <div className="w-[80vw] p-4 bg-white shadow-md rounded-lg z-10 relative">
         <button
           onClick={() => router.back()}
           className="self-start  rounded-lg hover:opacity-60"

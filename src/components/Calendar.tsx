@@ -12,14 +12,30 @@ import { th } from "date-fns/locale";
 
 interface DailySummary {
   date: Date;
-  moods: string[];
-  description: string[];
+  color: string;
+  // moods: string[];
+  // description: string[];
 }
 
 interface CalendarProps {
   summaries: DailySummary[];
   onDateSelect: (date: Date) => void;
 }
+
+const moodToColorClass = (mood) => {
+  switch (mood) {
+    case "ความสุข":
+      return "bg-green-500";
+    case "ตื่นเต้น":
+      return "bg-yellow-200";
+    case "เฉยๆ":
+      return "bg-blue-400";
+    case "เศร้า":
+      return "bg-purple-300";
+    default:
+      return "bg-gray-200";
+  }
+};
 
 const Calendar: React.FC<CalendarProps> = ({ summaries, onDateSelect }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -94,7 +110,7 @@ const Calendar: React.FC<CalendarProps> = ({ summaries, onDateSelect }) => {
               key={day.toString()}
               className={`p-2 text-center rounded-xl ${
                 summary
-                  ? "bg-blue-300"
+                  ? "" + moodToColorClass(summary.color)
                   : "bg-gray-100 btn-disabled text-core-grey"
               }`}
               onClick={() => onDateSelect(day)}
