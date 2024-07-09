@@ -17,12 +17,16 @@ const moodToColorClass = (mood) => {
   switch (mood) {
     case "ความสุข":
       return "bg-green-500";
-    case "ตื่นเต้น":
+    case "ความตื่นเต้น":
       return "bg-yellow-200";
     case "เฉยๆ":
       return "bg-blue-400";
-    case "เศร้า":
+    case "ความเศร้า":
       return "bg-purple-300";
+    case "ความโกรธ":
+      return "bg-red-500";
+    case "ความรัก":
+      return "bg-pink-500";
     default:
       return "bg-gray-200";
   }

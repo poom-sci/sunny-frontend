@@ -47,7 +47,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatId, setChatId] = useState<string>("");
   const [newMessage, setNewMessage] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [moodSelected, setMoodSelected] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -63,7 +63,7 @@ const Chat: React.FC = () => {
   const fetchMoreMessages = useCallback(async () => {
     if (!chatId || loading || !lastMessageTimestamp.current) return;
 
-    setLoading(true);
+    // setLoading(true);
     const messagesRef = ref(database, `Chat/${chatId}/messages`);
     const messagesQuery = query(
       messagesRef,
@@ -77,6 +77,7 @@ const Chat: React.FC = () => {
       const data = snapshot.val();
       const newMessages = Object.values(data) as Message[];
       if (newMessages.length > 0) {
+        setMoodSelected(true);
         lastMessageTimestamp.current = newMessages[0].created_at;
         setMessages((prevMessages) =>
           [...newMessages.slice(0, -1), ...prevMessages].sort(
@@ -100,6 +101,7 @@ const Chat: React.FC = () => {
 
         console.log("fetchInitialData", response);
         const chatId = response.data.data.chat.id;
+        // setLoading(true);
         setChatId(chatId);
 
         const messagesRef = ref(database, `Chat/${chatId}/messages`);
@@ -112,6 +114,8 @@ const Chat: React.FC = () => {
         // Use onValue for real-time updates
         const unsubscribe = onValue(messagesQuery, (snapshot) => {
           const updatedMessages: Message[] = [];
+
+          setMoodSelected(true);
           snapshot.forEach((childSnapshot) => {
             updatedMessages.push(childSnapshot.val() as Message);
           });
@@ -208,7 +212,7 @@ const Chat: React.FC = () => {
     });
   };
 
-  if (loading) {
+  if (loading && !chatId) {
     return (
       <div className="w-screen h-screen">
         <div className="w-full h-full flex justify-center items-center">
