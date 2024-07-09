@@ -58,6 +58,7 @@ const Chat: React.FC = () => {
   });
 
   const [userColor, setUserColor] = useState<string>("core-lightBlue");
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   const fetchMoreMessages = useCallback(async () => {
     if (!chatId || loading || !lastMessageTimestamp.current) return;
@@ -85,11 +86,12 @@ const Chat: React.FC = () => {
       }
     }
 
-    // setLoading(false);
+    setLoading(false);
   }, [chatId, loading]);
 
   useEffect(() => {
     const fetchInitialData = async () => {
+      console.log("storeUser", storeUser);
       try {
         const response = await axios.post<{ data: { chat: { id: string } } }>(
           `${process.env.NEXT_PUBLIC_API_ENDPOINT}/chat/today`,
@@ -123,7 +125,7 @@ const Chat: React.FC = () => {
           }
         });
 
-        // setLoading(false);
+        setLoading(false);
         // Return the unsubscribe function
         return unsubscribe;
       } catch (error) {
@@ -139,11 +141,8 @@ const Chat: React.FC = () => {
       });
     }
 
-    // setLoading(false);
+    setLoading(false);
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
     // Cleanup function
     return () => {
       if (unsubscribe) {
@@ -159,9 +158,16 @@ const Chat: React.FC = () => {
     // setLoading(false);
   }, [inView, loading, fetchMoreMessages]);
 
-  const sendMessage = async () => {
-    if (newMessage.trim() === "") return;
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !sendingMessage) {
+      sendMessage();
+    }
+  };
 
+  const sendMessage = async () => {
+    if (newMessage.trim() === "" || sendingMessage) return;
+
+    setSendingMessage(true);
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/chat/send`, {
         chatId,
@@ -182,10 +188,12 @@ const Chat: React.FC = () => {
             msg.status === "pending"
         );
         if (messageIndex !== -1) {
-          updatedMessages[messageIndex].status = "pending";
+          updatedMessages[messageIndex].status = "failed";
         }
         return updatedMessages;
       });
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -236,12 +244,15 @@ const Chat: React.FC = () => {
           <div
             className="btn btn-primary hover:transform hover:scale-105 transition-transform duration-300 shadow-lg"
             onClick={async () => {
+              setLoading(true); // Set loading state to true
               try {
                 const res = await summaryChat(storeUser?.uid);
 
                 await router.push("/calendar?chatId=" + chatId);
               } catch (error) {
                 console.log(error);
+              } finally {
+                setLoading(false); // Set loading state to false
               }
             }}
           >
@@ -318,12 +329,15 @@ const Chat: React.FC = () => {
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
                 className={`flex-grow p-2 rounded-lg focus:outline-none border-${userColor} border-2`}
                 placeholder="ส่ง..."
+                disabled={sendingMessage}
               />
               <button
                 onClick={sendMessage}
                 className={`p-2 bg-${userColor} text-white rounded-lg`}
+                disabled={sendingMessage}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

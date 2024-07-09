@@ -313,7 +313,7 @@ export default function Home() {
           />
           <Button
             color="#60B2DA"
-            text="พูดคุยกับซันนี่"
+            text={user.userName + "'s daily"}
             icon="fa-comment"
             onClick={() => {
               router.push("/chat");
