@@ -22,6 +22,6 @@
       "public/*": ["./public/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","**/*.css", ".next/types/**/*.ts", "src/pages/404.tsx", "src/components/homepage/Introduction.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","**/*.css", ".next/types/**/*.ts", "src/pages/404.tsx", "src/components/homepage/Introduction.tsx", "src/pages/api/test.js"],
   "exclude": ["node_modules"]
 }

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { getUser, getIsIntroComplete } from "@/api/auth";
 import { useRouter } from "next/router";
+import config from "@/lib/config";
 
 // style
 import "@/styles/globals.css";
@@ -19,7 +20,11 @@ import loadingLottie from "public/icons/lottie_loading.json";
 
 import useUserStore from "@/stores/user";
 
-import firebase from "@/lib/firebase";
+import firebase, { messaging } from "@/lib/firebase";
+// import { messaging } from "@/lib/firebase";
+
+import { getToken } from "firebase/messaging";
+import { upsertNotificationToken } from "@/api/notification";
 
 firebase();
 
@@ -46,6 +51,49 @@ export default function App({ Component, pageProps }: AppProps) {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const logout = useUserStore((state) => state.logout);
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      console.log("service worker is here");
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch((err) => {
+          console.log("Service Worker registration failed:", err);
+        });
+
+      const UrlFirebaseConfig = new URLSearchParams(
+        {
+          apiKey: config.firebase.apiKey,
+          authDomain: config.firebase.authDomain,
+          databaseURL: config.firebase.databaseURL,
+          projectId: config.firebase.projectId,
+          storageBucket: config.firebase.storageBucket,
+          messagingSenderId: config.firebase.messagingSenderId,
+          appId: config.firebase.appId,
+          measurementId: config.firebase.measurementId
+        }.toString()
+      );
+
+      const swUrl = `/firebase-messaging-sw.js?${UrlFirebaseConfig}`;
+      navigator.serviceWorker
+        .register(swUrl)
+        .then((registration) => {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch((err) => {
+          console.log("Service Worker registration failed:", err);
+        });
+    }
+  }, []);
 
   const fetchUserInfo = async () => {
     const auth = getAuth();
@@ -94,8 +142,18 @@ export default function App({ Component, pageProps }: AppProps) {
           while (retry > 0) {
             try {
               const res = await fetchUserInfo();
-              console.log("123", res);
+              // console.log("123", res);
 
+              const token = await getToken(messaging);
+              if (token && user && user.uid) {
+                await upsertNotificationToken({
+                  firebaseUid: user.uid,
+                  notificationToken: token,
+                  token: await user.getIdToken()
+                  // token: await user.getIdToken()
+                });
+                console.log(token);
+              }
               break;
             } catch (error) {
               console.error(error);
@@ -132,9 +190,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <main
-      className={`${IbmPlexSans.variable} ${Londrina.variable}`}
-    >
+    <main className={`${IbmPlexSans.variable} ${Londrina.variable}`}>
       {/* {isLoading ? (
         <div className="flex justify-center items-center h-screen">
           <Lottie

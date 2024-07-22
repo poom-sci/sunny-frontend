@@ -1,7 +1,15 @@
 import config from "@/lib/config";
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, FirebaseApp } from "firebase/app";
+// import { getMessaging, getToken } from "firebase/messaging";
+import {
+  getMessaging,
+  getToken,
+  onMessage,
+  Messaging
+} from "firebase/messaging";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -14,7 +22,8 @@ import {
   updateProfile
 } from "firebase/auth";
 // import firebase from 'firebase';
-import { getDatabase } from "firebase/database";
+import { getDatabase, Database } from "firebase/database";
+import { upsertNotificationToken } from "@/api/notification";
 
 import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -34,8 +43,43 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+// const app = initializeApp(firebaseConfig);
+// const database = getDatabase(app);
+// const messaging: Messaging = getMessaging(app);
+let app: FirebaseApp;
+let database: Database;
+let messaging: Messaging | null = null;
+
+// Initialize Firebase
+app = initializeApp(firebaseConfig);
+if (typeof window !== "undefined") {
+  database = getDatabase(app);
+  messaging = getMessaging(app);
+  // getToken(messaging).then(async (token) => {
+  //   const user = await auth.currentUser;
+  //   if (token && user.uid) {
+  //     await upsertNotificationToken({
+  //       firebaseUid: user.uid,
+  //       notificationToken: token,
+  //       token: await user.getIdToken()
+  //     });
+  //     console.log(token);
+  //   }
+  // });
+}
+
+// messaging.onBackgroundMessage(function (payload) {
+//   console.log("Received background message ", payload);
+//   const notificationTitle = payload.notification.title;
+//   const notificationOptions = {
+//     body: payload.notification.body
+//   };
+
+//   self.registration.showNotification(notificationTitle, notificationOptions);
+// });
+// onmessage(a=>{
+
+// })
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -146,9 +190,10 @@ export {
   auth,
   mapAuthCodeToMessage,
   sendVerificationEmail,
-  database
+  database,
+  messaging
 };
 
-export default () => {
-  return app;
+export default async () => {
+  return await app;
 };

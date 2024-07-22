@@ -1,7 +1,6 @@
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
-
   return (
     <Html lang="th">
       <Head>
@@ -14,6 +13,7 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
+        {/* <script async src="/firebase-messaging-sw.js"></script> */}
       </body>
     </Html>
   );

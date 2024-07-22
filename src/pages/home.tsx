@@ -25,6 +25,8 @@ import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import loadingLottie from "public/icons/lottie_loading.json";
 
+import useFirebaseMessaging from "@/utils/hooks/useFirebaseMessaging";
+
 app();
 
 moment.locale("th");
@@ -134,11 +136,7 @@ const HistoryItem = ({ date, text, color, mood, chatId }) => {
         router.push(`/chat/${chatId}`);
       }}
     >
-      {/* <img
-        // src={image}
-        alt={text}
-        className="w-12 h-12 rounded-full object-cover"
-      /> */}
+      
       <div>
         <p className="text-gray-700">{formattedDate}</p>
         <p className="text-orange-500">{mood}</p>
@@ -149,6 +147,7 @@ const HistoryItem = ({ date, text, color, mood, chatId }) => {
 
 export default function Home() {
   const router = useRouter();
+  useFirebaseMessaging();
 
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
